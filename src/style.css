@@ -56,3 +56,49 @@ body {
 .card-active {
   background-color: #fff;
 }
+
+.game-header .timer {
+  font-size: 48px;
+  font-weight: 500;
+  color: #fff;
+
+  display: flex;
+  justify-content: center;
+
+  padding: 1rem;
+  margin-bottom: 65px;
+}
+
+.game-header .timer svg {
+  margin-right: 11px;
+}
+
+.game-header-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 40px;
+  margin-bottom: 42px;
+}
+
+.game-header-info .start-restart-btn {
+  width: 147px;
+  height: 37px;
+  background-color: #fff;
+  border: 0;
+  border-radius: 5px;
+
+  font-size: 24px;
+  font-weight: 500px;
+  color: #7158e2;
+}
+
+.game-header-info .start-restart-btn svg {
+  display: none;
+}
+
+.game-header-info .moves-count {
+  font-size: 24px;
+  font-weight: 500px;
+  color: #fff;
+}
