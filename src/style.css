@@ -1,0 +1,58 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
+
+:root {
+  --numberOfRows: 4;
+  --numberOfColumns: 4;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Roboto", sans-serif;
+  background-color: #7158e2;
+}
+
+.main-container {
+  width: 613px;
+  height: 625px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(var(--numberOfColumns), 133px);
+  grid-template-rows: repeat(var(--numberOfRows), 133px);
+  column-gap: 27px;
+  row-gap: 30.5px;
+}
+
+.card {
+  width: 100%;
+  height: 100%;
+  background-color: #2f3542;
+  border-radius: 10px;
+  font-size: 64px;
+  color: #7158e2;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: all 0.3s;
+}
+
+.card:hover {
+  cursor: pointer;
+  transform: scale(1.05);
+}
+
+.card-active {
+  background-color: #fff;
+}
