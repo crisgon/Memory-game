@@ -24,7 +24,7 @@ const numberOfColumns = 4;
 window.addEventListener("load", () => {
   $board.innerHTML = generateGrid(numberOfRows, numberOfColumns);
 
-  console.log(getRandomEmojis(6));
+  console.log(duplicateAndRandomizeEmojis(getRandomEmojis(6)));
 });
 
 function generateGrid(rows, columns) {
@@ -47,4 +47,20 @@ function getRandomEmojis(numberOfEmojis) {
   }
 
   return list;
+}
+
+function duplicateAndRandomizeEmojis(listOfEmojis) {
+  const duplicatedEmojis = [...listOfEmojis, ...listOfEmojis];
+
+  for (let index = 0; index < duplicatedEmojis.length; index++) {
+    const randomNumber = Math.floor(Math.random() * duplicatedEmojis.length);
+
+    const randomEmoji = duplicatedEmojis[randomNumber];
+    const currentEmoji = duplicatedEmojis[index];
+
+    duplicatedEmojis[randomNumber] = currentEmoji;
+    duplicatedEmojis[index] = randomEmoji;
+  }
+
+  return duplicatedEmojis;
 }
