@@ -25,6 +25,8 @@ const emojiList = [
 const numberOfRows = 4;
 const numberOfColumns = 4;
 
+let movesCount = 0;
+
 let choices = [];
 
 const boardEmojiList = [];
@@ -53,35 +55,43 @@ function generateGrid(list) {
 }
 
 function handleCardClick(index, emoji) {
-  if (choices.length > 2) {
-    return;
-  }
-
   choices.push({ id: `card-${index}`, emoji });
-
-  if (choices[0]?.emoji === choices[1]?.emoji) {
-    choices = [];
-  }
-
-  if (choices.length === 2) {
-    setTimeout(() => {
-      resetCard();
-      choices = [];
-    }, 500);
-  }
 
   const $card = document.getElementById(`card-${index}`);
   $card.innerText = emoji;
+
+  if (choices.length === 2) {
+    changeMovesCount();
+    console.log(choices[0]?.emoji === choices[1]?.emoji);
+
+    if (choices[0]?.emoji === choices[1]?.emoji) {
+      console.log("Acertou");
+      choices = [];
+      return;
+    }
+
+    resetCard();
+  }
 }
 
 function resetCard() {
-  choices.forEach(({ id }) => {
-    const $card = document.getElementById(id);
+  setTimeout(() => {
+    choices.forEach(({ id }) => {
+      const $card = document.getElementById(id);
 
-    if ($card) {
-      $card.innerText = "?";
-    }
-  });
+      if ($card) {
+        $card.innerText = "?";
+      }
+    });
+
+    choices = [];
+  }, 500);
+}
+
+function changeMovesCount() {
+  movesCount += 1;
+  const $moves = document.getElementById("moves-count");
+  $moves.innerHTML = `Moves: ${movesCount}`;
 }
 
 function getRandomEmojis(numberOfEmojis) {
