@@ -11,29 +11,77 @@ const emojiList = [
   "🤔",
   "👀",
   "🗣",
-  "🧑🏽‍💻",
+  "🧑🏽‍",
   "🌚",
   "⛩",
   "🎉",
   "😬",
+  "🤑",
+  "👽",
+  "☂️",
+  "🚀",
 ];
 
 const numberOfRows = 4;
 const numberOfColumns = 4;
 
-window.addEventListener("load", () => {
-  $board.innerHTML = generateGrid(numberOfRows, numberOfColumns);
+let choices = [];
 
-  console.log(duplicateAndRandomizeEmojis(getRandomEmojis(6)));
+const boardEmojiList = [];
+
+window.addEventListener("load", () => {
+  const randomEmojis = getRandomEmojis((numberOfRows * numberOfColumns) / 2);
+
+  const duplicatedAndRandomizedEmojis = duplicateAndRandomizeEmojis(
+    randomEmojis
+  );
+
+  boardEmojiList.push(...duplicatedAndRandomizedEmojis);
+
+  $board.innerHTML = generateGrid(boardEmojiList);
 });
 
-function generateGrid(rows, columns) {
-  let gridCards = "";
-  for (let i = 0; i < rows * columns; i++) {
-    gridCards += `<div class="card">?</div>`;
-  }
+function generateGrid(list) {
+  const gridCards = list
+    .map(
+      (emoji, index) =>
+        `<div class="card" id="card-${index}" onclick="handleCardClick(${index}, '${emoji}')">?</div>`
+    )
+    .join("");
 
   return gridCards;
+}
+
+function handleCardClick(index, emoji) {
+  if (choices.length > 2) {
+    return;
+  }
+
+  choices.push({ id: `card-${index}`, emoji });
+
+  if (choices[0]?.emoji === choices[1]?.emoji) {
+    choices = [];
+  }
+
+  if (choices.length === 2) {
+    setTimeout(() => {
+      resetCard();
+      choices = [];
+    }, 500);
+  }
+
+  const $card = document.getElementById(`card-${index}`);
+  $card.innerText = emoji;
+}
+
+function resetCard() {
+  choices.forEach(({ id }) => {
+    const $card = document.getElementById(id);
+
+    if ($card) {
+      $card.innerText = "?";
+    }
+  });
 }
 
 function getRandomEmojis(numberOfEmojis) {
