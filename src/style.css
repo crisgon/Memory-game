@@ -94,6 +94,13 @@ body {
   font-size: 24px;
   font-weight: 500px;
   color: #7158e2;
+
+  transition: all 0.3s;
+}
+
+.game-header-info .start-restart-btn:hover {
+  cursor: pointer;
+  transform: scale(1.04);
 }
 
 .game-header-info .start-restart-btn svg {

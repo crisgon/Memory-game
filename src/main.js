@@ -1,5 +1,5 @@
 const $board = document.getElementById("board");
-const $startBtn = document.getElementById("start-btn");
+const $startOrResetBtn = document.getElementById("start-btn");
 
 const emojiList = [
   "😀",
@@ -35,7 +35,7 @@ let gameIsRunning = false;
 
 const boardEmojiList = [];
 
-$startBtn.addEventListener("click", startGame);
+$startOrResetBtn.addEventListener("click", startOrResetGame);
 
 window.addEventListener("load", () => {
   const randomEmojis = getRandomEmojis((numberOfRows * numberOfColumns) / 2);
@@ -49,11 +49,22 @@ window.addEventListener("load", () => {
   $board.innerHTML = generateGrid(boardEmojiList);
 });
 
-function startGame() {
-  gameIsRunning = true;
+function startOrResetGame() {
+  gameIsRunning = !gameIsRunning;
 
-  document.documentElement.style.setProperty("--cursorState", "pointer");
-  document.documentElement.style.setProperty("--cardScale", "1.05");
+  if (gameIsRunning) {
+    $startOrResetBtn.innerText = "Reset";
+
+    document.documentElement.style.setProperty("--cursorState", "pointer");
+    document.documentElement.style.setProperty("--cardScale", "1.05");
+  } else {
+    $startOrResetBtn.innerText = "Start";
+
+    changeMovesCount(0);
+
+    document.documentElement.style.setProperty("--cursorState", "not-allowed");
+    document.documentElement.style.setProperty("--cardScale", "1");
+  }
 }
 
 function generateGrid(list) {
@@ -78,7 +89,7 @@ function handleCardClick(index, emoji) {
   $card.innerText = emoji;
 
   if (choices.length === 2) {
-    changeMovesCount();
+    changeMovesCount(movesCount + 1);
 
     if (choices[0]?.emoji === choices[1]?.emoji) {
       hits.push(choices[0].emoji);
@@ -105,8 +116,8 @@ function resetCard() {
   }, 400);
 }
 
-function changeMovesCount() {
-  movesCount += 1;
+function changeMovesCount(val) {
+  movesCount = val;
   const $moves = document.getElementById("moves-count");
   $moves.innerHTML = `Moves: ${movesCount}`;
 }
