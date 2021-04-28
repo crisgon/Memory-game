@@ -3,6 +3,8 @@
 :root {
   --numberOfRows: 3;
   --numberOfColumns: 6;
+  --cursorState: not-allowed;
+  --cardScale: 1;
 }
 
 * {
@@ -45,11 +47,11 @@ body {
   justify-content: center;
 
   transition: all 0.3s;
+  cursor: var(--cursorState);
 }
 
 .card:hover {
-  cursor: pointer;
-  transform: scale(1.05);
+  transform: scale(var(--cardScale));
 }
 
 .card-active {

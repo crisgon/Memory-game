@@ -1,4 +1,5 @@
 const $board = document.getElementById("board");
+const $startBtn = document.getElementById("start-btn");
 
 const emojiList = [
   "😀",
@@ -30,7 +31,11 @@ let movesCount = 0;
 let choices = [];
 let hits = [];
 
+let gameIsRunning = false;
+
 const boardEmojiList = [];
+
+$startBtn.addEventListener("click", startGame);
 
 window.addEventListener("load", () => {
   const randomEmojis = getRandomEmojis((numberOfRows * numberOfColumns) / 2);
@@ -44,6 +49,13 @@ window.addEventListener("load", () => {
   $board.innerHTML = generateGrid(boardEmojiList);
 });
 
+function startGame() {
+  gameIsRunning = true;
+
+  document.documentElement.style.setProperty("--cursorState", "pointer");
+  document.documentElement.style.setProperty("--cardScale", "1.05");
+}
+
 function generateGrid(list) {
   const gridCards = list
     .map(
@@ -56,7 +68,7 @@ function generateGrid(list) {
 }
 
 function handleCardClick(index, emoji) {
-  if (hits.includes(emoji)) {
+  if (hits.includes(emoji) || !gameIsRunning) {
     return;
   }
 
