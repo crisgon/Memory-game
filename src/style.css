@@ -1,8 +1,8 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
 
 :root {
-  --numberOfRows: 4;
-  --numberOfColumns: 4;
+  --numberOfRows: 3;
+  --numberOfColumns: 6;
 }
 
 * {
@@ -17,7 +17,6 @@ body {
 }
 
 .main-container {
-  width: 613px;
   height: 625px;
   position: absolute;
   top: 50%;
@@ -58,18 +57,20 @@ body {
 }
 
 .game-header .timer {
-  font-size: 48px;
+  font-size: 38px;
   font-weight: 500;
   color: #fff;
 
   display: flex;
   justify-content: center;
+  align-items: center;
 
   padding: 1rem;
-  margin-bottom: 65px;
+  margin-bottom: 25px;
 }
 
 .game-header .timer svg {
+  width: 30px;
   margin-right: 11px;
 }
 
@@ -83,7 +84,7 @@ body {
 
 .game-header-info .start-restart-btn {
   width: 147px;
-  height: 37px;
+  height: 40px;
   background-color: #fff;
   border: 0;
   border-radius: 5px;

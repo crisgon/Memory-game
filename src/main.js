@@ -22,8 +22,8 @@ const emojiList = [
   "🚀",
 ];
 
-const numberOfRows = 4;
-const numberOfColumns = 4;
+const numberOfRows = 3;
+const numberOfColumns = 6;
 
 let movesCount = 0;
 
@@ -90,7 +90,7 @@ function resetCard() {
     });
 
     choices = [];
-  }, 800);
+  }, 400);
 }
 
 function changeMovesCount() {
