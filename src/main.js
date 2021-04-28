@@ -28,6 +28,7 @@ const numberOfColumns = 4;
 let movesCount = 0;
 
 let choices = [];
+let hits = [];
 
 const boardEmojiList = [];
 
@@ -55,6 +56,10 @@ function generateGrid(list) {
 }
 
 function handleCardClick(index, emoji) {
+  if (hits.includes(emoji)) {
+    return;
+  }
+
   choices.push({ id: `card-${index}`, emoji });
 
   const $card = document.getElementById(`card-${index}`);
@@ -62,10 +67,10 @@ function handleCardClick(index, emoji) {
 
   if (choices.length === 2) {
     changeMovesCount();
-    console.log(choices[0]?.emoji === choices[1]?.emoji);
 
     if (choices[0]?.emoji === choices[1]?.emoji) {
-      console.log("Acertou");
+      hits.push(choices[0].emoji);
+
       choices = [];
       return;
     }
@@ -85,7 +90,7 @@ function resetCard() {
     });
 
     choices = [];
-  }, 500);
+  }, 800);
 }
 
 function changeMovesCount() {
