@@ -1,5 +1,6 @@
 const $board = document.getElementById("board");
 const $startOrResetBtn = document.getElementById("start-btn");
+const $timerCount = document.getElementById("timer-count");
 
 const emojiList = [
   "😀",
@@ -26,11 +27,15 @@ const emojiList = [
 const numberOfRows = 3;
 const numberOfColumns = 6;
 
+const SECONDS_IN_MINUTES = 60;
+const MINUTES = 0.1;
+
 let movesCount = 0;
 
 let choices = [];
 let hits = [];
 
+let gameTimer = null;
 let gameIsRunning = false;
 
 const boardEmojiList = [];
@@ -55,12 +60,15 @@ function startOrResetGame() {
   if (gameIsRunning) {
     $startOrResetBtn.innerText = "Reset";
 
+    handleTimer();
     document.documentElement.style.setProperty("--cursorState", "pointer");
     document.documentElement.style.setProperty("--cardScale", "1.05");
   } else {
     $startOrResetBtn.innerText = "Start";
 
     changeMovesCount(0);
+    clearInterval(gameTimer);
+    $timerCount.innerText = "03:00";
 
     document.documentElement.style.setProperty("--cursorState", "not-allowed");
     document.documentElement.style.setProperty("--cardScale", "1");
@@ -149,4 +157,26 @@ function duplicateAndRandomizeEmojis(listOfEmojis) {
   }
 
   return duplicatedEmojis;
+}
+
+function handleTimer() {
+  let time = MINUTES * SECONDS_IN_MINUTES;
+  let minutes = 3;
+  let seconds = 0;
+
+  gameTimer = setInterval(() => {
+    if (time === 0) {
+      clearInterval(gameTimer);
+      return;
+    }
+
+    time -= 1;
+    minutes = Math.floor(time / 60);
+    seconds = time % 60;
+
+    minutes = minutes < 10 ? `0${minutes}` : minutes;
+    seconds = seconds < 10 ? `0${seconds}` : seconds;
+
+    $timerCount.innerText = `${minutes}:${seconds}`;
+  }, 1000);
 }
