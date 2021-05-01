@@ -1,6 +1,13 @@
 const $board = document.getElementById("board");
 const $startOrResetBtn = document.getElementById("start-btn");
 const $timerCount = document.getElementById("timer-count");
+const $gameContainer = document.getElementById("game-container");
+const $gameCompletedMessage = document.getElementById("game-completed");
+const $playAgainBtn = document.getElementById("play-again-btn");
+const $gameCompletedTime = document.getElementById("game-completed-time");
+const $gameCompletedMovesCount = document.getElementById(
+  "game-completed-moves"
+);
 
 const emojiList = [
   "😀",
@@ -28,21 +35,34 @@ const numberOfRows = 3;
 const numberOfColumns = 6;
 
 const SECONDS_IN_MINUTES = 60;
-const MINUTES = 0.1;
+const MINUTES = 1;
 
 let movesCount = 0;
+let time = MINUTES * SECONDS_IN_MINUTES;
 
 let choices = [];
+let activeCards = [];
 let hits = [];
 
 let gameTimer = null;
 let gameIsRunning = false;
 
-const boardEmojiList = [];
+let boardEmojiList = [];
 
 $startOrResetBtn.addEventListener("click", startOrResetGame);
 
-window.addEventListener("load", () => {
+$playAgainBtn.addEventListener("click", () => {
+  resetGame();
+  startGame();
+  showOrHiddenBoard();
+  showOrHiddenGameCompletedMessage();
+});
+
+window.addEventListener("load", makeGameBoard);
+
+function makeGameBoard() {
+  boardEmojiList = [];
+  hits = [];
   const randomEmojis = getRandomEmojis((numberOfRows * numberOfColumns) / 2);
 
   const duplicatedAndRandomizedEmojis = duplicateAndRandomizeEmojis(
@@ -51,28 +71,56 @@ window.addEventListener("load", () => {
 
   boardEmojiList.push(...duplicatedAndRandomizedEmojis);
 
+  console.log(boardEmojiList);
+
   $board.innerHTML = generateGrid(boardEmojiList);
-});
+}
 
 function startOrResetGame() {
   gameIsRunning = !gameIsRunning;
 
-  if (gameIsRunning) {
-    $startOrResetBtn.innerText = "Reset";
+  gameIsRunning ? startGame() : resetGame();
+}
 
-    handleTimer();
-    document.documentElement.style.setProperty("--cursorState", "pointer");
-    document.documentElement.style.setProperty("--cardScale", "1.05");
-  } else {
-    $startOrResetBtn.innerText = "Start";
+function startGame() {
+  $startOrResetBtn.innerText = "Reset";
 
-    changeMovesCount(0);
+  handleTimer();
+  document.documentElement.style.setProperty("--cursorState", "pointer");
+  document.documentElement.style.setProperty("--cardScale", "1.05");
+}
+
+function resetGame() {
+  $startOrResetBtn.innerText = "Start";
+
+  changeMovesCount(0);
+  clearInterval(gameTimer);
+  makeGameBoard();
+  $timerCount.innerText = "01:00";
+
+  document.documentElement.style.setProperty("--cursorState", "not-allowed");
+  document.documentElement.style.setProperty("--cardScale", "1");
+}
+
+function finishGame() {
+  const numberOfEmojis = (numberOfRows * numberOfColumns) / 2;
+  if (hits.length === numberOfEmojis) {
     clearInterval(gameTimer);
-    $timerCount.innerText = "03:00";
 
-    document.documentElement.style.setProperty("--cursorState", "not-allowed");
-    document.documentElement.style.setProperty("--cardScale", "1");
+    $gameCompletedTime.innerText = formatTime();
+    $gameCompletedMovesCount.innerText = movesCount;
+
+    showOrHiddenBoard();
+    showOrHiddenGameCompletedMessage();
   }
+}
+
+function showOrHiddenBoard() {
+  $gameContainer.classList.toggle("main-container-hidden");
+}
+
+function showOrHiddenGameCompletedMessage() {
+  $gameCompletedMessage.classList.toggle("game-completed-hidden");
 }
 
 function generateGrid(list) {
@@ -96,21 +144,18 @@ function handleCardClick(index, emoji) {
   const $card = document.getElementById(`card-${index}`);
   $card.innerText = emoji;
 
+  activeCards.push($card);
+
   if (choices.length === 2) {
     changeMovesCount(movesCount + 1);
-
-    if (choices[0]?.emoji === choices[1]?.emoji) {
-      hits.push(choices[0].emoji);
-
-      choices = [];
-      return;
-    }
-
+    correctCombo();
     resetCard();
   }
 }
 
 function resetCard() {
+  activeCards = [];
+
   setTimeout(() => {
     choices.forEach(({ id }) => {
       const $card = document.getElementById(id);
@@ -121,7 +166,23 @@ function resetCard() {
     });
 
     choices = [];
-  }, 400);
+  }, 500);
+}
+
+function correctCombo() {
+  if (choices[0]?.emoji === choices[1]?.emoji) {
+    hits.push(choices[0].emoji);
+
+    choices = [];
+
+    activeCards.forEach((card) => {
+      card.style.backgroundColor = "#fff";
+    });
+
+    finishGame();
+
+    return;
+  }
 }
 
 function changeMovesCount(val) {
@@ -159,24 +220,30 @@ function duplicateAndRandomizeEmojis(listOfEmojis) {
   return duplicatedEmojis;
 }
 
+function formatTime() {
+  let minutes = Math.floor(time / 60);
+  let seconds = time % 60;
+
+  minutes = minutes < 10 ? `0${minutes}` : minutes;
+  seconds = seconds < 10 ? `0${seconds}` : seconds;
+  const formatedTime = `${minutes}:${seconds}`;
+
+  return formatedTime;
+}
+
 function handleTimer() {
-  let time = MINUTES * SECONDS_IN_MINUTES;
-  let minutes = 3;
-  let seconds = 0;
+  time = MINUTES * SECONDS_IN_MINUTES;
 
   gameTimer = setInterval(() => {
     if (time === 0) {
       clearInterval(gameTimer);
+      resetGame();
+      gameIsRunning = false;
+      console.log({ gameIsRunning });
       return;
     }
 
     time -= 1;
-    minutes = Math.floor(time / 60);
-    seconds = time % 60;
-
-    minutes = minutes < 10 ? `0${minutes}` : minutes;
-    seconds = seconds < 10 ? `0${seconds}` : seconds;
-
-    $timerCount.innerText = `${minutes}:${seconds}`;
+    $timerCount.innerText = formatTime();
   }, 1000);
 }

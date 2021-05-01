@@ -26,6 +26,11 @@ body {
   transform: translate(-50%, -50%);
 }
 
+.main-container-hidden {
+  z-index: -999;
+  opacity: 0;
+}
+
 .board {
   display: grid;
   grid-template-columns: repeat(var(--numberOfColumns), 133px);
@@ -111,4 +116,44 @@ body {
   font-size: 24px;
   font-weight: 500px;
   color: #fff;
+}
+
+.game-completed {
+  width: 300px;
+  height: 300px;
+  padding: 1rem;
+  background-color: #fff;
+  border-radius: 8px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.game-completed-hidden {
+  z-index: -999;
+  opacity: 0;
+}
+
+.game-completed svg {
+  width: 80px;
+  margin-bottom: 1rem;
+}
+
+.game-completed h3 {
+  margin-bottom: 1rem;
+}
+
+.game-completed p {
+  padding: 0.5rem;
+}
+
+.game-completed button {
+  border-radius: 5px;
+  color: #fff;
+  background-color: #7158e2;
+  padding: 0.5rem;
+  border: 0;
+  cursor: pointer;
 }
