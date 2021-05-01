@@ -3,11 +3,6 @@ const $startOrResetBtn = document.getElementById("start-btn");
 const $timerCount = document.getElementById("timer-count");
 const $gameContainer = document.getElementById("game-container");
 const $gameCompletedMessage = document.getElementById("game-completed");
-const $playAgainBtn = document.getElementById("play-again-btn");
-const $gameCompletedTime = document.getElementById("game-completed-time");
-const $gameCompletedMovesCount = document.getElementById(
-  "game-completed-moves"
-);
 
 const emojiList = [
   "😀",
@@ -51,14 +46,9 @@ let boardEmojiList = [];
 
 $startOrResetBtn.addEventListener("click", startOrResetGame);
 
-$playAgainBtn.addEventListener("click", () => {
-  resetGame();
-  startGame();
-  showOrHiddenBoard();
-  showOrHiddenGameCompletedMessage();
-});
-
 window.addEventListener("load", makeGameBoard);
+
+// Control game functions
 
 function makeGameBoard() {
   boardEmojiList = [];
@@ -70,8 +60,6 @@ function makeGameBoard() {
   );
 
   boardEmojiList.push(...duplicatedAndRandomizedEmojis);
-
-  console.log(boardEmojiList);
 
   $board.innerHTML = generateGrid(boardEmojiList);
 }
@@ -86,6 +74,7 @@ function startGame() {
   $startOrResetBtn.innerText = "Reset";
 
   handleTimer();
+
   document.documentElement.style.setProperty("--cursorState", "pointer");
   document.documentElement.style.setProperty("--cardScale", "1.05");
 }
@@ -102,17 +91,64 @@ function resetGame() {
   document.documentElement.style.setProperty("--cardScale", "1");
 }
 
+function playAgain() {
+  resetGame();
+  startGame();
+  showOrHiddenBoard();
+  showOrHiddenGameCompletedMessage();
+}
+
 function finishGame() {
   const numberOfEmojis = (numberOfRows * numberOfColumns) / 2;
   if (hits.length === numberOfEmojis) {
-    clearInterval(gameTimer);
-
-    $gameCompletedTime.innerText = formatTime();
-    $gameCompletedMovesCount.innerText = movesCount;
-
-    showOrHiddenBoard();
-    showOrHiddenGameCompletedMessage();
+    generateFinishCard({ win: true });
+  } else if (!gameIsRunning) {
+    generateFinishCard({ win: false });
   }
+
+  clearInterval(gameTimer);
+  showOrHiddenBoard();
+  showOrHiddenGameCompletedMessage();
+}
+
+function getRandomEmojis(numberOfEmojis) {
+  const list = new Set();
+
+  while (Array.from(list).length < numberOfEmojis) {
+    const randomNumber = Math.floor(Math.random() * emojiList.length);
+    const randomEmoji = emojiList[randomNumber];
+
+    list.add(randomEmoji);
+  }
+
+  return list;
+}
+
+function duplicateAndRandomizeEmojis(listOfEmojis) {
+  const duplicatedEmojis = [...listOfEmojis, ...listOfEmojis];
+
+  for (let index = 0; index < duplicatedEmojis.length; index++) {
+    const randomNumber = Math.floor(Math.random() * duplicatedEmojis.length);
+
+    const randomEmoji = duplicatedEmojis[randomNumber];
+    const currentEmoji = duplicatedEmojis[index];
+
+    duplicatedEmojis[randomNumber] = currentEmoji;
+    duplicatedEmojis[index] = randomEmoji;
+  }
+
+  return duplicatedEmojis;
+}
+
+function generateFinishCard(gameStatus) {
+  const cardContent = ` <span>${gameStatus.win ? "🏆" : "😭"}</span>
+      <h2>${gameStatus.win ? "Parabéns!!" : "Que pena..."}</h2>
+      <h3>Você ${gameStatus.win ? "ganhou" : "perdeu"} o game!</h3>
+      <p>Game finalizado em <span>${formatTime()}</span></p>
+      <p>Você utilizou <span>${movesCount}</span> movimentos</p>
+      <button onclick="playAgain()">Jogar Novamente</button>`;
+
+  $gameCompletedMessage.innerHTML = cardContent;
 }
 
 function showOrHiddenBoard() {
@@ -133,6 +169,8 @@ function generateGrid(list) {
 
   return gridCards;
 }
+
+// Control cards functions
 
 function handleCardClick(index, emoji) {
   if (hits.includes(emoji) || !gameIsRunning) {
@@ -169,6 +207,8 @@ function resetCard() {
   }, 500);
 }
 
+// Control game status
+
 function correctCombo() {
   if (choices[0]?.emoji === choices[1]?.emoji) {
     hits.push(choices[0].emoji);
@@ -191,35 +231,6 @@ function changeMovesCount(val) {
   $moves.innerHTML = `Moves: ${movesCount}`;
 }
 
-function getRandomEmojis(numberOfEmojis) {
-  const list = new Set();
-
-  while (Array.from(list).length < numberOfEmojis) {
-    const randomNumber = Math.floor(Math.random() * emojiList.length);
-    const randomEmoji = emojiList[randomNumber];
-
-    list.add(randomEmoji);
-  }
-
-  return list;
-}
-
-function duplicateAndRandomizeEmojis(listOfEmojis) {
-  const duplicatedEmojis = [...listOfEmojis, ...listOfEmojis];
-
-  for (let index = 0; index < duplicatedEmojis.length; index++) {
-    const randomNumber = Math.floor(Math.random() * duplicatedEmojis.length);
-
-    const randomEmoji = duplicatedEmojis[randomNumber];
-    const currentEmoji = duplicatedEmojis[index];
-
-    duplicatedEmojis[randomNumber] = currentEmoji;
-    duplicatedEmojis[index] = randomEmoji;
-  }
-
-  return duplicatedEmojis;
-}
-
 function formatTime() {
   let minutes = Math.floor(time / 60);
   let seconds = time % 60;
@@ -239,11 +250,13 @@ function handleTimer() {
       clearInterval(gameTimer);
       resetGame();
       gameIsRunning = false;
-      console.log({ gameIsRunning });
+
+      finishGame(false);
       return;
     }
 
     time -= 1;
+
     $timerCount.innerText = formatTime();
   }, 1000);
 }

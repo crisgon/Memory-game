@@ -24,6 +24,7 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  transition: all 0.3s;
 }
 
 .main-container-hidden {
@@ -129,6 +130,7 @@ body {
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
+  transition: all 0.3s;
 }
 
 .game-completed-hidden {
@@ -136,8 +138,8 @@ body {
   opacity: 0;
 }
 
-.game-completed svg {
-  width: 80px;
+.game-completed > span {
+  font-size: 5rem;
   margin-bottom: 1rem;
 }
 
