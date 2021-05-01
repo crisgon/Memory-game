@@ -94,21 +94,29 @@ function resetGame() {
 function playAgain() {
   resetGame();
   startGame();
+
+  gameIsRunning = true;
+
   showOrHiddenBoard();
   showOrHiddenGameCompletedMessage();
 }
 
 function finishGame() {
   const numberOfEmojis = (numberOfRows * numberOfColumns) / 2;
-  if (hits.length === numberOfEmojis) {
-    generateFinishCard({ win: true });
-  } else if (!gameIsRunning) {
-    generateFinishCard({ win: false });
+
+  function showCard() {
+    clearInterval(gameTimer);
+    showOrHiddenBoard();
+    showOrHiddenGameCompletedMessage();
   }
 
-  clearInterval(gameTimer);
-  showOrHiddenBoard();
-  showOrHiddenGameCompletedMessage();
+  if (hits.length === numberOfEmojis) {
+    generateFinishCard({ win: true });
+    showCard();
+  } else if (!gameIsRunning) {
+    generateFinishCard({ win: false });
+    showCard();
+  }
 }
 
 function getRandomEmojis(numberOfEmojis) {
