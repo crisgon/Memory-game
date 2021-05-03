@@ -152,7 +152,8 @@ function generateFinishCard(gameStatus) {
   const cardContent = ` <span>${gameStatus.win ? "🏆" : "😭"}</span>
       <h2>${gameStatus.win ? "Parabéns!!" : "Que pena..."}</h2>
       <h3>Você ${gameStatus.win ? "ganhou" : "perdeu"} o game!</h3>
-      <p>Game finalizado em <span>${formatTime()}</span></p>
+      <p style="display: ${gameStatus.win ? "block" : "none"}" 
+      }>Game finalizado em <span>${formatTime()}</span></p>
       <p>Você utilizou <span>${movesCount}</span> movimentos</p>
       <button onclick="playAgain()">Jogar Novamente</button>`;
 
@@ -256,10 +257,11 @@ function handleTimer() {
   gameTimer = setInterval(() => {
     if (time === 0) {
       clearInterval(gameTimer);
-      resetGame();
+
       gameIsRunning = false;
 
       finishGame(false);
+      resetGame();
       return;
     }
 
