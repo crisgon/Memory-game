@@ -8,6 +8,27 @@
     <title>Memory Game</title>
   </head>
   <body>
+    <div class="overlay overlay-hidden" id="overlay"></div>
+    <button class="config-btn" id="config-btn">⚙️</button>
+
+    <div class="levels levels-hidden" id="levels">
+      <h3>Difficulty</h3>
+      <label>
+        Easy
+        <input type="radio" name="difficulty" id="easy" checked />
+      </label>
+
+      <label>
+        Medium
+        <input type="radio" name="difficulty" id="medium" />
+      </label>
+
+      <label>
+        Hard
+        <input type="radio" name="difficulty" id="hard" />
+      </label>
+    </div>
+
     <main class="main-container" id="game-container">
       <header class="game-header">
         <h2 class="timer">

@@ -3,6 +3,13 @@ const $startOrResetBtn = document.getElementById("start-btn");
 const $timerCount = document.getElementById("timer-count");
 const $gameContainer = document.getElementById("game-container");
 const $gameCompletedMessage = document.getElementById("game-completed");
+const $gameDifficultyOptions = document.querySelectorAll(
+  "input[name='difficulty']"
+);
+
+const $gameConfigBtn = document.getElementById("config-btn");
+const $levels = document.getElementById("levels");
+const $overlay = document.getElementById("overlay");
 
 const emojiList = [
   "😀",
@@ -26,11 +33,34 @@ const emojiList = [
   "🚀",
 ];
 
-const numberOfRows = 3;
-const numberOfColumns = 6;
+const levels = {
+  easy: {
+    rows: 2,
+    columns: 5,
+    numberOfEmojis: 5,
+    minutes: 1,
+  },
+  medium: {
+    rows: 3,
+    columns: 6,
+    numberOfEmojis: 9,
+    minutes: 2,
+  },
+  hard: {
+    rows: 4,
+    columns: 8,
+    numberOfEmojis: 16,
+    minutes: 3,
+  },
+};
+
+let currentDifficulty = levels.easy;
+
+const numberOfRows = currentDifficulty.rows;
+const numberOfColumns = currentDifficulty.columns;
 
 const SECONDS_IN_MINUTES = 60;
-const MINUTES = 1;
+const MINUTES = currentDifficulty.minutes;
 
 let movesCount = 0;
 let time = MINUTES * SECONDS_IN_MINUTES;
@@ -46,14 +76,50 @@ let boardEmojiList = [];
 
 $startOrResetBtn.addEventListener("click", startOrResetGame);
 
+$gameConfigBtn.addEventListener("click", () => {
+  toggleOvelaryAndLevelsConfig();
+});
+
+$overlay.addEventListener("click", () => {
+  toggleOvelaryAndLevelsConfig();
+});
+
 window.addEventListener("load", makeGameBoard);
 
+window.addEventListener("load", () => {
+  $gameDifficultyOptions.forEach((el) => {
+    el.addEventListener("click", (e) => {
+      controlGameLevel(e.target.id);
+    });
+  });
+});
+
 // Control game functions
+
+function controlGameLevel(level) {
+  currentDifficulty = levels[level];
+
+  document.documentElement.style.setProperty(
+    "--numberOfRows",
+    currentDifficulty.rows
+  );
+  document.documentElement.style.setProperty(
+    "--numberOfColumns",
+    currentDifficulty.columns
+  );
+
+  time = calcGameTime();
+
+  $timerCount.innerText = formatTime();
+
+  toggleOvelaryAndLevelsConfig();
+  makeGameBoard();
+}
 
 function makeGameBoard() {
   boardEmojiList = [];
   hits = [];
-  const randomEmojis = getRandomEmojis((numberOfRows * numberOfColumns) / 2);
+  const randomEmojis = getRandomEmojis(currentDifficulty.numberOfEmojis);
 
   const duplicatedAndRandomizedEmojis = duplicateAndRandomizeEmojis(
     randomEmojis
@@ -85,7 +151,10 @@ function resetGame() {
   changeMovesCount(0);
   clearInterval(gameTimer);
   makeGameBoard();
-  $timerCount.innerText = "01:00";
+
+  time = calcGameTime();
+
+  $timerCount.innerText = formatTime();
 
   document.documentElement.style.setProperty("--cursorState", "not-allowed");
   document.documentElement.style.setProperty("--cardScale", "1");
@@ -252,7 +321,7 @@ function formatTime() {
 }
 
 function handleTimer() {
-  time = MINUTES * SECONDS_IN_MINUTES;
+  time = calcGameTime();
 
   gameTimer = setInterval(() => {
     if (time === 0) {
@@ -269,4 +338,13 @@ function handleTimer() {
 
     $timerCount.innerText = formatTime();
   }, 1000);
+}
+
+function calcGameTime() {
+  return currentDifficulty.minutes * SECONDS_IN_MINUTES;
+}
+
+function toggleOvelaryAndLevelsConfig() {
+  $levels.classList.toggle("levels-hidden");
+  $overlay.classList.toggle("overlay-hidden");
 }
