@@ -121,9 +121,8 @@ function makeGameBoard() {
   hits = [];
   const randomEmojis = getRandomEmojis(currentDifficulty.numberOfEmojis);
 
-  const duplicatedAndRandomizedEmojis = duplicateAndRandomizeEmojis(
-    randomEmojis
-  );
+  const duplicatedAndRandomizedEmojis =
+    duplicateAndRandomizeEmojis(randomEmojis);
 
   boardEmojiList.push(...duplicatedAndRandomizedEmojis);
 
@@ -251,7 +250,7 @@ function generateGrid(list) {
 // Control cards functions
 
 function handleCardClick(index, emoji) {
-  if (hits.includes(emoji) || !gameIsRunning) {
+  if (hits.includes(emoji) || !gameIsRunning || checkIfCardIsClicked(index)) {
     return;
   }
 
@@ -347,4 +346,10 @@ function calcGameTime() {
 function toggleOvelaryAndLevelsConfig() {
   $levels.classList.toggle("levels-hidden");
   $overlay.classList.toggle("overlay-hidden");
+}
+
+function checkIfCardIsClicked(index) {
+  const card = choices.find((c) => c.id === `card-${index}`);
+
+  return Boolean(card);
 }
